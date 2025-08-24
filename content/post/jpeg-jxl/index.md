@@ -8,6 +8,8 @@ categories:
     - tech
 tags:
     - tech
+math: true
+
 ---
 
 
