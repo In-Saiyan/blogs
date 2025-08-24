@@ -1,15 +1,16 @@
 ---
-
-title: JPEG Should Die, This Is Why
-description: Why it's time for JPEG to go.
-date: 2025-08-25 00:00:00+0000
+title: JPEG Should Die, Here Is Why
+date: 2025-08-24 00:16:00+0530
 slug: jpeg-jxl
-categories: 
-    - tech
-tags:
-    - tech
-math: true
-
+description: A big rant about JPEG and Quantization in image encoding.
+tags: 
+  - JPEG
+  - JPX
+  - encoding
+  - images
+categories:
+  - entertainment
+  - media
 ---
 
 
