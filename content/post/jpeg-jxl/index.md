@@ -51,7 +51,7 @@ What I learned was that JPEG does Frequency quantization. I know this is a lot o
 
 This looks something like:
 
-$$
+<!-- $$
 \begin{bmatrix}
 -415 & -33 & -58 & 35 & 58 & -51 & -15 & -12\\
 -30  & -24 & -10 & 16 & 24 &  -6 &  -7 &  -5\\
@@ -75,7 +75,9 @@ $$
   0 &  0 &  0 & 0 & 0 &  0 & 0 & 0\\
   0 &  0 &  0 & 0 & 0 &  0 & 0 & 0
 \end{bmatrix}
-$$
+$$ -->
+
+![Matrix Image](attachments/matrix.png)
 
 Now what happens is that when I shuffle the image and save it as a JPEG then the new (scrambled) image is saved with this DCT + Quantization applied on top of it which **compresses the edges of the tiles with respect to their neighbors**, this affects edges the most since they rapidly vary because the image is no longer continuous. This causes a massive loss in data, where the tiles would have to be rejoined after unscrambling the image.
 
