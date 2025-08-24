@@ -4,7 +4,7 @@ date: 2025-08-24 00:16:00+0530
 slug: jpeg-jxl
 description: A big rant about JPEG and Quantization in image encoding.
 math: true
-tags: 
+tags:
   - JPEG
   - JPX
   - encoding
@@ -13,7 +13,6 @@ categories:
   - entertainment
   - media
 ---
-
 
 # 1	My Experience with JPEG
 ## 1.1	Introduction
