@@ -50,26 +50,27 @@ I will not dive deep into the algorithm of [how JPEG compresses data](https://cg
 What I learned was that JPEG does Frequency quantization. I know this is a lot of technical jargon, but bear with me for a minute; it will all make sense. **Frequency-based quantization** reduces a rapidly varying array(consider this to be an array of brightness of pixels) into a smooth array(which humans would not be able to distinguish since the changes are on a pixel level). What this essentially does is that it makes compressing the image data easier.
 
 This looks something like:
+
 $$
 \begin{bmatrix}
--415 & -33 & -58 & 35 & 58 & -51 & -15 & -12\\
--30  & -24 & -10 & 16 & 24 &  -6 &  -7 &  -5\\
--55  & -17 & -29 & 17 & 19 & -10 &   4 &   1\\
- 35  & -23 &   9 & -3 & -1 &   5 &   1 &   1\\
--58  &  -9 &  -2 & 15 &  2 &  -1 &  -3 &   1\\
--39  &  12 &   7 & -3 & -1 &   2 &   4 &  -2\\
-  5  &  -2 &  -2 &  1 & -1 &  -1 &   1 &   2\\
+-415 & -33 & -58 & 35 & 58 & -51 & -15 & -12\\\\
+-30  & -24 & -10 & 16 & 24 &  -6 &  -7 &  -5\\\\
+-55  & -17 & -29 & 17 & 19 & -10 &   4 &   1\\\\
+ 35  & -23 &   9 & -3 & -1 &   5 &   1 &   1\\\\
+-58  &  -9 &  -2 & 15 &  2 &  -1 &  -3 &   1\\\\
+-39  &  12 &   7 & -3 & -1 &   2 &   4 &  -2\\\\
+  5  &  -2 &  -2 &  1 & -1 &  -1 &   1 &   2\\\\
  -1  &  -1 &  -1 & -2 & -3 &  -1 &  -2 &  -3
 \end{bmatrix}
-\longrightarrow
+\to
 \begin{bmatrix}
--26 & -3 & -6 & 2 & 2 & -1 & 0 & 0\\
- -2 & -2 & -1 & 1 & 1 &  0 & 0 & 0\\
- -4 & -1 & -2 & 1 & 0 &  0 & 0 & 0\\
-  3 & -1 &  0 & 0 & 0 &  0 & 0 & 0\\
- -3 &  0 &  0 & 0 & 0 &  0 & 0 & 0\\
- -2 &  0 &  0 & 0 & 0 &  0 & 0 & 0\\
-  0 &  0 &  0 & 0 & 0 &  0 & 0 & 0\\
+-26 & -3 & -6 & 2 & 2 & -1 & 0 & 0\\\\
+ -2 & -2 & -1 & 1 & 1 &  0 & 0 & 0\\\\
+ -4 & -1 & -2 & 1 & 0 &  0 & 0 & 0\\\\
+  3 & -1 &  0 & 0 & 0 &  0 & 0 & 0\\\\
+ -3 &  0 &  0 & 0 & 0 &  0 & 0 & 0\\\\
+ -2 &  0 &  0 & 0 & 0 &  0 & 0 & 0\\\\
+  0 &  0 &  0 & 0 & 0 &  0 & 0 & 0\\\\
   0 &  0 &  0 & 0 & 0 &  0 & 0 & 0
 \end{bmatrix}
 $$
