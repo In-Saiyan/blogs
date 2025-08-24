@@ -3,6 +3,7 @@ title: JPEG Should Die, Here Is Why
 date: 2025-08-24 00:16:00+0530
 slug: jpeg-jxl
 description: A big rant about JPEG and Quantization in image encoding.
+math: true
 tags: 
   - JPEG
   - JPX
@@ -32,10 +33,10 @@ I will demonstrate the intensity of artifacts by shuffling, then saving, and the
 
 ### 1.3.1	Input Image
 
-![[input.jpeg]]
+![Input Image](attachments/input.jpeg)
 
 ### 1.3.2	Output Image
-![[output.jpeg]]
+![Output Image](attachments/output.jpeg)
 
 
 As you can see, there are some grid lines in the output image, even when the settings were set to `quality = 100` for this task. I was aware of the lossy nature of JPEG, but the lines could not be there because of that(**RIGHT??**). This made me doubt JavaScript for its number precision many times during the process of fixing this issue. Causing me to waste upwards of 5-6 hours on this.
@@ -83,7 +84,7 @@ I reached these 2 formats as alternatives after I read a [blog comparing differe
 
 > The set of Pareto-optimal methods is called the “[Pareto front](https://en.wikipedia.org/wiki/Pareto_front).” It can be visualized by putting the different methods on a chart that shows both dimensions - encode speed and compression density. Instead of looking at a single image, which may not be representative, we look at a set of images and look at the average speed and compression density for each encoder and effort setting. For example, for [this set of test images](https://imagecompression.info/test_images/), the chart looks like this:
 
-![[Pasted image 20250824224512.png]]
+![Graph Image](attachments/graph.png)
 
 > The vertical axis shows the encode speed, in megapixels per second. It’s a logarithmic scale since it has to cover a broad range of speeds, from less than one megapixel per second to hundreds of megapixels per second. The horizontal axis shows the average bits per pixel for the compressed image (uncompressed 8-bit RGB is 24 bits per pixel).
 
