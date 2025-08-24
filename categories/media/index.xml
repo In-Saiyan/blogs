@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Media on insane's blogs</title><link>https://in-saiyan.github.io/blogs/categories/media/</link><description>Recent content in Media on insane's blogs</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 24 Aug 2025 00:16:00 +0530</lastBuildDate><atom:link href="https://in-saiyan.github.io/blogs/categories/media/index.xml" rel="self" type="application/rss+xml"/><item><title>JPEG Should Die, Here Is Why</title><link>https://in-saiyan.github.io/blogs/p/jpeg-jxl/</link><pubDate>Sun, 24 Aug 2025 00:16:00 +0530</pubDate><guid>https://in-saiyan.github.io/blogs/p/jpeg-jxl/</guid><description>&lt;h1 id="1my-experience-with-jpeg">1 My Experience with JPEG
+&lt;/h1>&lt;h2 id="11introduction">1.1 Introduction
+&lt;/h2>&lt;p>JPEG, the image encoding format that has been the standard for a very long time, has its own shortcomings, including the lack of a lossless format for a long time, which was &lt;strong>fixed&lt;/strong> in J2K, but not along with all its other shortcomings. Neither was J2K widely adopted.&lt;/p>
+&lt;p>Behold - JXL, the format overcomes the shortcomings of its predecessor and compresses even the regrets of the developers.&lt;/p>
+&lt;p>Hatred and Biases aside, for a long time in my life, I&amp;rsquo;ve lived unaware of the problems that would ruin a good chunk of my &amp;ldquo;work time&amp;rdquo;, one of them being: JPEG. This is not a blog; this is a full log of how I ended up hating an image encoding format because of &lt;strong>my own mistake&lt;/strong>.&lt;/p>
+&lt;h2 id="12the-error">1.2 The Error
+&lt;/h2>&lt;p>I was working on one of my projects that requires a JPEG image to be loaded in the memory and then saved again &lt;em>after some processing, which might include shifting pixels&lt;/em>. The testing went fine - due to a major flaw in my testing unit: I was supposed to shuffle the pixels, then save the file, &lt;strong>then&lt;/strong> unshuffle the &lt;strong>saved&lt;/strong> image. But I accidentally shuffled and unshuffled in the image in &lt;strong>memory&lt;/strong> itself. The results were fine - and oh boy was I so naive.&lt;/p>
+&lt;h2 id="13the-panic">1.3 The Panic
+&lt;/h2>&lt;p>When the data(shuffled image) was received by the front-end, and when I tried to un-shuffle the pixels &lt;strong>on the front-end&lt;/strong>, artifacts showed up. And the thing to notice was that the artifacts were &lt;strong>very&lt;/strong> noticeable.&lt;/p>
+&lt;p>I will demonstrate the intensity of artifacts by shuffling, then saving, and then finally unshuffling with a grid size of 10x10.&lt;/p>
+&lt;h3 id="131input-image">1.3.1 Input Image
+&lt;/h3>&lt;p>&lt;img src="https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/input.jpeg"
+width="612"
+height="408"
+srcset="https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/input_hu_36fde159c10f9873.jpeg 480w, https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/input_hu_be29aeac49f0498a.jpeg 1024w"
+loading="lazy"
+alt="Input Image"
+class="gallery-image"
+data-flex-grow="150"
+data-flex-basis="360px"
+>&lt;/p>
+&lt;h3 id="132output-image">1.3.2 Output Image
+&lt;/h3>&lt;p>&lt;img src="https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/output.jpeg"
+width="612"
+height="408"
+srcset="https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/output_hu_88eca439f37dd0d5.jpeg 480w, https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/output_hu_2a338d4659c3b6ec.jpeg 1024w"
+loading="lazy"
+alt="Output Image"
+class="gallery-image"
+data-flex-grow="150"
+data-flex-basis="360px"
+>&lt;/p>
+&lt;p>As you can see, there are some grid lines in the output image, even when the settings were set to &lt;code>quality = 100&lt;/code> for this task. I was aware of the lossy nature of JPEG, but the lines could not be there because of that(&lt;strong>RIGHT??&lt;/strong>). This made me doubt JavaScript for its number precision many times during the process of fixing this issue. Causing me to waste upwards of 5-6 hours on this.&lt;/p>
+&lt;h3 id="133the-observation">1.3.3 The Observation
+&lt;/h3>&lt;p>I went all in, went onto re-reading my implementation of shuffling in the back-end, to checking JavaScript(the front-end) for its precision for numerical data types: Result? - &lt;strong>NOTHING&lt;/strong>&lt;/p>
+&lt;p>No clues pointed to the &lt;strong>real&lt;/strong> culprit out in the wild: JPEG. I gave up, was going to sleep, but I was still thinking about the cause of this issue. I opened my phone and searched about JPEG, and here was the big reveal: &lt;a class="link" href="https://en.wikipedia.org/wiki/Quantization_%28image_processing%29#Frequency_quantization_for_image_compression" target="_blank" rel="noopener"
+>&lt;strong>Quantization&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p>I will not dive deep into the algorithm of &lt;a class="link" href="https://cgjennings.ca/articles/jpeg-compression/" target="_blank" rel="noopener"
+>how JPEG compresses data&lt;/a>, but it&amp;rsquo;s certainly not &amp;ldquo;good&amp;rdquo; for the image quality. Neither any other compression methods that use the same DCT and Quantization approach will ever be recommended or used by me ever again.&lt;/p>
+&lt;p>What I learned was that JPEG does Frequency quantization. I know this is a lot of technical jargon, but bear with me for a minute; it will all make sense. &lt;strong>Frequency-based quantization&lt;/strong> reduces a rapidly varying array(consider this to be an array of brightness of pixels) into a smooth array(which humans would not be able to distinguish since the changes are on a pixel level). What this essentially does is that it makes compressing the image data easier.&lt;/p>
+&lt;p>This looks something like:&lt;/p>
+&lt;!-- $$
+\begin{bmatrix}
+-415 &amp; -33 &amp; -58 &amp; 35 &amp; 58 &amp; -51 &amp; -15 &amp; -12\\
+-30 &amp; -24 &amp; -10 &amp; 16 &amp; 24 &amp; -6 &amp; -7 &amp; -5\\
+-55 &amp; -17 &amp; -29 &amp; 17 &amp; 19 &amp; -10 &amp; 4 &amp; 1\\
+35 &amp; -23 &amp; 9 &amp; -3 &amp; -1 &amp; 5 &amp; 1 &amp; 1\\
+-58 &amp; -9 &amp; -2 &amp; 15 &amp; 2 &amp; -1 &amp; -3 &amp; 1\\
+-39 &amp; 12 &amp; 7 &amp; -3 &amp; -1 &amp; 2 &amp; 4 &amp; -2\\
+5 &amp; -2 &amp; -2 &amp; 1 &amp; -1 &amp; -1 &amp; 1 &amp; 2\\
+-1 &amp; -1 &amp; -1 &amp; -2 &amp; -3 &amp; -1 &amp; -2 &amp; -3
+\end{bmatrix}
+\longrightarrow
+\begin{bmatrix}
+-26 &amp; -3 &amp; -6 &amp; 2 &amp; 2 &amp; -1 &amp; 0 &amp; 0\\
+-2 &amp; -2 &amp; -1 &amp; 1 &amp; 1 &amp; 0 &amp; 0 &amp; 0\\
+-4 &amp; -1 &amp; -2 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0\\
+3 &amp; -1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\\
+-3 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\\
+-2 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0
+\end{bmatrix}
+$$ -->
+&lt;p>&lt;img src="https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/matrix.png"
+width="1191"
+height="331"
+srcset="https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/matrix_hu_7120a5399d9661f0.png 480w, https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/matrix_hu_92b437991e852c6f.png 1024w"
+loading="lazy"
+alt="Matrix Image"
+class="gallery-image"
+data-flex-grow="359"
+data-flex-basis="863px"
+>&lt;/p>
+&lt;p>Now what happens is that when I shuffle the image and save it as a JPEG then the new (scrambled) image is saved with this DCT + Quantization applied on top of it which &lt;strong>compresses the edges of the tiles with respect to their neighbors&lt;/strong>, this affects edges the most since they rapidly vary because the image is no longer continuous. This causes a massive loss in data, where the tiles would have to be rejoined after unscrambling the image.&lt;/p>
+&lt;h1 id="2in-search-of-alternatives">2 In search of alternatives
+&lt;/h1>&lt;p>After finding the issue in JPEG itself, I searched for alternatives and came across various encoding formats. &lt;strong>AVIF&lt;/strong> and &lt;strong>JXL&lt;/strong> were the ones that caught my attention the most.
+I reached these 2 formats as alternatives after I read a &lt;a class="link" href="https://giannirosato.com/blog/post/image-comparison/" target="_blank" rel="noopener"
+>blog comparing different image codecs&lt;/a> and reached the conclusion that AVIF generally gives better compression at lower quality, but as the quality increases, JXL starts to dominate the game.&lt;/p>
+&lt;blockquote>
+&lt;p>The set of Pareto-optimal methods is called the “&lt;a class="link" href="https://en.wikipedia.org/wiki/Pareto_front" target="_blank" rel="noopener"
+>Pareto front&lt;/a>.” It can be visualized by putting the different methods on a chart that shows both dimensions - encode speed and compression density. Instead of looking at a single image, which may not be representative, we look at a set of images and look at the average speed and compression density for each encoder and effort setting. For example, for &lt;a class="link" href="https://imagecompression.info/test_images/" target="_blank" rel="noopener"
+>this set of test images&lt;/a>, the chart looks like this:&lt;/p>&lt;/blockquote>
+&lt;p>&lt;img src="https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/graph.png"
+width="1846"
+height="1596"
+srcset="https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/graph_hu_e29d95012571dd9e.png 480w, https://in-saiyan.github.io/blogs/p/jpeg-jxl/attachments/graph_hu_358e833455812248.png 1024w"
+loading="lazy"
+alt="Graph Image"
+class="gallery-image"
+data-flex-grow="115"
+data-flex-basis="277px"
+>&lt;/p>
+&lt;blockquote>
+&lt;p>The vertical axis shows the encode speed, in megapixels per second. It’s a logarithmic scale since it has to cover a broad range of speeds, from less than one megapixel per second to hundreds of megapixels per second. The horizontal axis shows the average bits per pixel for the compressed image (uncompressed 8-bit RGB is 24 bits per pixel).&lt;/p>&lt;/blockquote>
+&lt;p>From the Blog - &lt;a class="link" href="https://cloudinary.com/blog/jpeg-xl-and-the-pareto-front" target="_blank" rel="noopener"
+>JPEG-XL and the Pareto Front&lt;/a>&lt;/p>
+&lt;blockquote>
+&lt;p>TLDR: Higher means faster, more to the left means better compression.&lt;/p>&lt;/blockquote>
+&lt;p>Results are on the table, the cat is out of the bag, and I will never use JPEG on my own unless I absolutely need it from now on.&lt;/p>
+&lt;p>ALL HAIL JXL!&lt;/p>
+&lt;h1 id="3why-and-conclusion">3 WHY!!! and Conclusion
+&lt;/h1>&lt;blockquote>
+&lt;p>ALL HAIL JXL - famous last words from previous section&lt;/p>&lt;/blockquote>
+&lt;p>The &lt;a class="link" href="https://news.ycombinator.com/item?id=33399940" target="_blank" rel="noopener"
+>news&lt;/a> is very old, unlike my short-lived belief that I&amp;rsquo;d be able to finally switch to JXL. There is no official JXL support on Chrome and many browsers after Google decided to deprecate JXL in 2022. They decided to drop the support for JXL for some reason, like &amp;ldquo;&lt;a class="link" href="https://news.ycombinator.com/item?id=33401474" target="_blank" rel="noopener"
+>adding a single frame decode is a minor overhead&lt;/a>&amp;rdquo;. Any news of &lt;a class="link" href="https://www.reddit.com/r/jpegxl/comments/15kpacf/google_may_reconsider_jpegxl_image_support_within/" target="_blank" rel="noopener"
+>them bringing it back&lt;/a> is just a rumor for now. One of the weird things is that out of all the browsers in the world, even SAFARI supports JXL.&lt;/p>
+&lt;p>Here, the struggle of making JXL work in a browser ends. I ended up converting all my data to WEBP/PNG for lossy issues and bore with the bitter transcoding times for dynamic images.&lt;/p>
+&lt;p>I guess we just can&amp;rsquo;t have nice things&amp;hellip; But I&amp;rsquo;ll keep using JXL as my main image encoding format, at least locally from now on.&lt;/p></description></item></channel></rss>
