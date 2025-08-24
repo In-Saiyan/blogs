@@ -61,7 +61,7 @@ $$
   5  &  -2 &  -2 &  1 & -1 &  -1 &   1 &   2\\
  -1  &  -1 &  -1 & -2 & -3 &  -1 &  -2 &  -3
 \end{bmatrix}
-\;\; \longrightarrow \;\;
+\longrightarrow
 \begin{bmatrix}
 -26 & -3 & -6 & 2 & 2 & -1 & 0 & 0\\
  -2 & -2 & -1 & 1 & 1 &  0 & 0 & 0\\
@@ -72,7 +72,6 @@ $$
   0 &  0 &  0 & 0 & 0 &  0 & 0 & 0\\
   0 &  0 &  0 & 0 & 0 &  0 & 0 & 0
 \end{bmatrix}
-
 $$
 
 Now what happens is that when I shuffle the image and save it as a JPEG then the new (scrambled) image is saved with this DCT + Quantization applied on top of it which **compresses the edges of the tiles with respect to their neighbors**, this affects edges the most since they rapidly vary because the image is no longer continuous. This causes a massive loss in data, where the tiles would have to be rejoined after unscrambling the image.
@@ -102,4 +101,4 @@ The [news](https://news.ycombinator.com/item?id=33399940) is very old, unlike my
 
 Here, the struggle of making JXL work in a browser ends. I ended up converting all my data to WEBP/PNG for lossy issues and bore with the bitter transcoding times for dynamic images.
 
-I guess we just can't have nice things... But I'll keep using JXL as my main image encoding format, at least locally from now. on
+I guess we just can't have nice things... But I'll keep using JXL as my main image encoding format, at least locally from now on.
